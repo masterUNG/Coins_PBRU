@@ -13,9 +13,11 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	//Explicit
 	private SpriteBatch batch;
-	private Texture wallpaperTexture;
+	private Texture wallpaperTexture, cloudTexture;
 	private OrthographicCamera objOrthographicCamera;
 	private BitmapFont nameBitmapFont;
+	private int xCloudAnInt, yCloudAnInt = 600;
+	private boolean cloudABoolean = true;
 	
 	@Override
 	public void create () {
@@ -32,6 +34,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		nameBitmapFont = new BitmapFont();
 		nameBitmapFont.setColor(Color.RED);
 		nameBitmapFont.setScale(4);
+
+		//Setup Cloud
+		cloudTexture = new Texture("cloud.png");
 
 	}	// create เอาไว้กำหนดค่า
 
@@ -52,11 +57,38 @@ public class MyGdxGame extends ApplicationAdapter {
 		//Drawable Wallpaper
 		batch.draw(wallpaperTexture, 0, 0);
 
+		//Drawable Cloud
+		batch.draw(cloudTexture, xCloudAnInt, yCloudAnInt);
+
 		//Drawable BitMapFont
 		nameBitmapFont.draw(batch, "Coins PBRU", 50, 750);
 
 
 		batch.end();
 
+		//Move Cloud
+		moveCloud();
+
+
+
 	}	// render ตัวนี่คือ loop
+
+	private void moveCloud() {
+
+		if (cloudABoolean) {
+			if (xCloudAnInt < 937) {
+				xCloudAnInt += 100 * Gdx.graphics.getDeltaTime();
+			} else {
+				cloudABoolean = !cloudABoolean;
+			}
+		} else {
+			if (xCloudAnInt > 0) {
+				xCloudAnInt -= 100 * Gdx.graphics.getDeltaTime();
+			} else {
+				cloudABoolean = !cloudABoolean;
+			}
+		}
+
+	}	// moveCloud
+
 }	// Main Class
