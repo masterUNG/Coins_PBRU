@@ -112,6 +112,11 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//Drawable Pig
 		batch.draw(pigTexture, pigRectangle.x, pigRectangle.y);
+		
+		//Drawable Coins
+		for (Rectangle forCoins : coinsArray) {
+			batch.draw(coinsTexture, forCoins.x, forCoins.y);
+		}
 
 
 		batch.end();
@@ -122,7 +127,38 @@ public class MyGdxGame extends ApplicationAdapter {
 		//Active When Touch Screen
 		activeTouchScreen();
 
+		//Random Drop Coins
+		randomDropCoins();
+
+
+
+
+
 	}	// render ตัวนี่คือ loop
+
+	private void randomDropCoins() {
+
+		if (TimeUtils.nanoTime() - lastDropCoins > 1E9) {
+			coinsRandomDrop();
+		}
+
+		coinsIterator = coinsArray.iterator();
+		while (coinsIterator.hasNext()) {
+
+			Rectangle myCoinsRectangle = coinsIterator.next();
+			myCoinsRectangle.y -= 50 * Gdx.graphics.getDeltaTime();
+
+			//When Coins into Floor
+			if (myCoinsRectangle.y + 64 < 0) {
+				coinsIterator.remove();
+
+			}
+
+
+
+		}
+
+	}	// randomDropCoins
 
 	private void activeTouchScreen() {
 
