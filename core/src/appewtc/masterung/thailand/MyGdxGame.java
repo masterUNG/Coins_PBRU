@@ -29,7 +29,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private boolean cloudABoolean = true;
 	private Rectangle pigRectangle, coinsRectangle;
 	private Vector3 objVector3;
-	private Sound pigSound;
+	private Sound pigSound, waterDropSound, coinsDropSound;
 	private Array<Rectangle> coinsArray;
 	private long lastDropCoins;
 	private Iterator<Rectangle> coinsIterator; // ===> Java.util
@@ -73,6 +73,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		coinsArray = new Array<Rectangle>();
 		coinsRandomDrop();
 
+		//Setup WaterDrop
+		waterDropSound = Gdx.audio.newSound(Gdx.files.internal("water_drop.wav"));
+
+		//Setup Coins Drop
+		coinsDropSound = Gdx.audio.newSound(Gdx.files.internal("coins_drop.wav"));
+
 
 	}	// create เอาไว้กำหนดค่า
 
@@ -112,7 +118,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//Drawable Pig
 		batch.draw(pigTexture, pigRectangle.x, pigRectangle.y);
-		
+
 		//Drawable Coins
 		for (Rectangle forCoins : coinsArray) {
 			batch.draw(coinsTexture, forCoins.x, forCoins.y);
@@ -150,13 +156,18 @@ public class MyGdxGame extends ApplicationAdapter {
 
 			//When Coins into Floor
 			if (myCoinsRectangle.y + 64 < 0) {
+				waterDropSound.play();
 				coinsIterator.remove();
 
-			}
+			}	// if
 
+			//When Coins OverLap Pig
+			if (myCoinsRectangle.overlaps(pigRectangle)) {
+				coinsDropSound.play();
+				coinsIterator.remove();
+			}	// if
 
-
-		}
+		}	// while Loop
 
 	}	// randomDropCoins
 
