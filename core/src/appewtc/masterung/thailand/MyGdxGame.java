@@ -2,6 +2,7 @@ package appewtc.masterung.thailand;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,16 +25,17 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Texture wallpaperTexture, cloudTexture,
 			pigTexture, coinsTexture, rainTexture;
 	private OrthographicCamera objOrthographicCamera;
-	private BitmapFont nameBitmapFont, scoreBitmapFont;
+	private BitmapFont nameBitmapFont, scoreBitmapFont, showScoreBitmapFont;
 	private int xCloudAnInt, yCloudAnInt = 600;
-	private boolean cloudABoolean = true;
+	private boolean cloudABoolean = true, finishABoolean = false;
 	private Rectangle pigRectangle, coinsRectangle, rainRectangle;
 	private Vector3 objVector3;
 	private Sound pigSound, waterDropSound, coinsDropSound;
 	private Array<Rectangle> coinsArray, rainArray;
 	private long lastDropCoins, lastDropRain;
 	private Iterator<Rectangle> coinsIterator, rainIterator; // ===> Java.util
-	private int scoreAnInt = 0;
+	private int scoreAnInt = 0, falseAnInt = 0, finialScoreAnInt;
+	private Music rainMusic, backgroundMusic;
 	
 	@Override
 	public void create () {
@@ -92,6 +94,16 @@ public class MyGdxGame extends ApplicationAdapter {
 		rainArray = new Array<Rectangle>();
 		rainRandomDrop();
 
+		//Setup rainMusic
+		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+
+		//Setup backgroundMusic
+		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("bggame.mp3"));
+
+		//Setup ShowScore
+		showScoreBitmapFont = new BitmapFont();
+		showScoreBitmapFont.setColor(230, 28, 223, 255);
+		showScoreBitmapFont.setScale(5);
 
 	}	// create เอาไว้กำหนดค่า
 
@@ -158,6 +170,16 @@ public class MyGdxGame extends ApplicationAdapter {
 			batch.draw(rainTexture, forRain.x, forRain.y);
 		}
 
+		if (finishABoolean) {
+
+			batch.draw(wallpaperTexture, 0 , 0);
+			showScoreBitmapFont.draw(batch, "Your Score ==> " + Integer.toString(finialScoreAnInt), 500, 750);
+
+		}	//if
+
+
+
+
 		batch.end();
 
 		//Move Cloud
@@ -172,7 +194,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		//Random Drop Rain
 		randomDropRain();
 
+		//Play rainMusic
+		rainMusic.play();
 
+		//Play backGroundMusic
+		backgroundMusic.play();
 
 	}	// render ตัวนี่คือ loop
 
@@ -219,8 +245,10 @@ public class MyGdxGame extends ApplicationAdapter {
 
 			//When Coins into Floor
 			if (myCoinsRectangle.y + 64 < 0) {
+				falseAnInt += 1;
 				waterDropSound.play();
 				coinsIterator.remove();
+				checkFalse();
 
 			}	// if
 
@@ -234,6 +262,32 @@ public class MyGdxGame extends ApplicationAdapter {
 		}	// while Loop
 
 	}	// randomDropCoins
+
+	private void checkFalse() {
+		if (falseAnInt > 20) {
+			dispose();
+
+			if (!finishABoolean) {
+				finialScoreAnInt = scoreAnInt;
+			}
+
+			finishABoolean = true;
+
+		}	// if
+	}	//checkFalse
+
+	@Override
+	public void dispose() {
+		super.dispose();
+
+		backgroundMusic.dispose();
+		rainMusic.dispose();
+		pigSound.dispose();
+		waterDropSound.dispose();
+		coinsDropSound.dispose();
+
+
+	}	// dispose
 
 	private void activeTouchScreen() {
 
