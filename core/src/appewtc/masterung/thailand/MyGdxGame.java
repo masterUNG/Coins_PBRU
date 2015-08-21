@@ -9,21 +9,30 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+
+import java.util.Iterator;
 
 public class MyGdxGame extends ApplicationAdapter {
 
 	//Explicit
 	private SpriteBatch batch;
-	private Texture wallpaperTexture, cloudTexture, pigTexture;
+	private Texture wallpaperTexture, cloudTexture,
+			pigTexture, coinsTexture;
 	private OrthographicCamera objOrthographicCamera;
 	private BitmapFont nameBitmapFont;
 	private int xCloudAnInt, yCloudAnInt = 600;
 	private boolean cloudABoolean = true;
-	private Rectangle pigRectangle;
+	private Rectangle pigRectangle, coinsRectangle;
 	private Vector3 objVector3;
 	private Sound pigSound;
+	private Array<Rectangle> coinsArray;
+	private long lastDropCoins;
+	private Iterator<Rectangle> coinsIterator; // ===> Java.util
 	
 	@Override
 	public void create () {
@@ -57,8 +66,26 @@ public class MyGdxGame extends ApplicationAdapter {
 		//Setup Pig Sound
 		pigSound = Gdx.audio.newSound(Gdx.files.internal("pig.wav"));
 
+		//Setup Coins
+		coinsTexture = new Texture("coins.png");
+
+		//Create coinsArray
+		coinsArray = new Array<Rectangle>();
+		coinsRandomDrop();
+
 
 	}	// create เอาไว้กำหนดค่า
+
+	private void coinsRandomDrop() {
+
+		coinsRectangle = new Rectangle();
+		coinsRectangle.x = MathUtils.random(0, 1136);
+		coinsRectangle.y = 800;
+		coinsRectangle.width = 64;
+		coinsRectangle.height = 64;
+		coinsArray.add(coinsRectangle);
+		lastDropCoins = TimeUtils.nanoTime();
+	}	// coinsRandomDrop
 
 	@Override
 	public void render () {
@@ -107,7 +134,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			objVector3 = new Vector3();
 			objVector3.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-			if (objVector3.x < 600) {
+			if (objVector3.x < Gdx.graphics.getWidth()/2) {
 				if (pigRectangle.x < 0) {
 					pigRectangle.x = 0;
 				} else {
